@@ -1,36 +1,25 @@
-# This is a basic workflow to help you get started with Actions
+name: Daily Commit
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  schedule:
+    - cron: '57 11 * * *'  # Runs daily at 11:50 UTC (17:20 IST)
+  workflow_dispatch:  # Allows manual triggering
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  commit-job:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Make a dummy change
+      run: |
+        echo "Last run at $(date)" > last-run.txt
+        git config --global user.email "v.g7404@gmail.com"
+        git config --global user.name "ivarungupta"
+        git add last-run.txt
+        git commit -m "Automated commit to maintain streak"
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Push changes
+      run: git push
