@@ -1,0 +1,24 @@
+name: Daily Commit
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight UTC
+
+jobs:
+  commit-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Make a dummy change
+      run: |
+        echo "Last run at $(date)" > last-run.txt
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "your-github-username"
+        git add last-run.txt
+        git commit -m "Automated commit to maintain streak"
+
+    - name: Push changes
+      run: git push
